@@ -3,10 +3,10 @@ package metrics
 import (
 	"sync"
 	"time"
+	"net/http"
 
 	"github.com/labstack/echo"
 	mt "github.com/rcrowley/go-metrics"
-	"net/http"
 )
 
 var (
@@ -35,9 +35,9 @@ func Handler(c echo.Context) error {
 }
 
 func Measure(c echo.Context, start time.Time) {
-	key := c.Request().URI()
+	key := c.Path()
 	res := c.Response()
-	metricsHttp.Measure(key, start, res.Size(), res.Status())
+	metricsHttp.Measure(key, start, res.Size, res.Status)
 }
 
 type metric struct {
