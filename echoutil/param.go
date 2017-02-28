@@ -1,19 +1,33 @@
 package echoutil
 
 import (
+	"net/url"
+
 	"github.com/labstack/echo"
 	"github.com/najeira/conv"
 )
 
 var (
 	getters = []getter{
-		echo.Context.Param,
+		getPathParam,
 		echo.Context.QueryParam,
 		echo.Context.FormValue,
 	}
 )
 
 type getter func(echo.Context, string) string
+
+func getPathParam(c echo.Context, name string) string {
+	v := echo.Context.Param(c, name)
+	if len(v) <= 0 {
+		return v
+	}
+	u, err := url.PathUnescape(v)
+	if err != nil {
+		return v
+	}
+	return u
+}
 
 func getParam(c echo.Context, name string) string {
 	for _, getter := range getters {
@@ -25,8 +39,7 @@ func getParam(c echo.Context, name string) string {
 }
 
 func ParamString(c echo.Context, name string, args ...string) string {
-	v := getParam(c, name)
-	if len(v) > 0 {
+	if v := getParam(c, name); len(v) > 0 {
 		return v
 	} else if len(args) > 0 {
 		return args[0]
