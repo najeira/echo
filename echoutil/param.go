@@ -1,8 +1,6 @@
 package echoutil
 
 import (
-	"net/url"
-
 	"github.com/labstack/echo"
 	"github.com/najeira/conv"
 )
@@ -22,7 +20,7 @@ func getPathParam(c echo.Context, name string) string {
 	if len(v) <= 0 {
 		return v
 	}
-	u, err := url.PathUnescape(v)
+	u, err := pathUnescape(v)
 	if err != nil {
 		return v
 	}
